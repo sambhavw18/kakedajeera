@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kake Fizz - Zeera vs Mojito Duel</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        
+        /* Smooth, premium transitions for theme switching */
+        body {
+            transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease;
+        }
+
+        /* Ambient grid pattern background */
+        .bg-grid-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Glassmorphic Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Shake animation for screen collision */
+        @keyframes screen-shake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-4px, 4px) rotate(-1deg); }
+            30% { transform: translate(4px, -4px) rotate(1deg); }
+            50% { transform: translate(-4px, -4px) rotate(-1deg); }
+            70% { transform: translate(4px, 4px) rotate(1deg); }
+            90% { transform: translate(-2px, 2px) rotate(0deg); }
+        }
+
+        .shake-active {
+            animation: screen-shake 0.4s ease-in-out;
+        }
+
+        /* Shockwave visual ring */
+        @keyframes shockwave-ring {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; border-width: 1px; }
+        }
+
+        .shockwave {
+            position: absolute;
+            border: 6px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            display: none;
+            z-index: 50;
+        }
+
+        /* Custom floating particles */
+        @keyframes float-bubble-slow {
+            0% { transform: translateY(110vh) scale(0.8) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-20vh) scale(1.3) rotate(360deg); opacity: 0; }
+        }
+
+        .bubble-particle {
+            position: absolute;
+            bottom: -50px;
+            pointer-events: none;
+            animation: float-bubble-slow var(--duration, 10s) infinite linear;
+            animation-delay: var(--delay, 0s);
+            z-index: 5;
+        }
+
+        /* Neon Glowing Overlays */
+        .glow-zeera {
+            box-shadow: 0 0 80px -10px rgba(245, 158, 11, 0.25);
+        }
+
+        .glow-mojito {
+            box-shadow: 0 0 80px -10px rgba(16, 185, 129, 0.25);
+        }
+
+        /* Perspective containers for 3D tilts */
+        .perspective-container {
+            perspective: 1200px;
+        }
+
+        /* Scrollbar customization */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0c0a09;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #292524;
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body id="mainBody" class="bg-stone-950 text-stone-100 font-sans tracking-wide overflow-x-hidden bg-grid-pattern">
+
+    <!-- BACKGROUND GLOW EFFECTS -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div id="dynamicGlowLeft" class="absolute top-1/4 left-1/4 -translate-x-1/2 w-[50vw] h-[50vw] rounded-full bg-amber-500/10 blur-[130px] transition-all duration-1000 ease-out"></div>
+        <div id="dynamicGlowRight" class="absolute top-1/4 right-1/4 translate-x-1/2 w-[50vw] h-[50vw] rounded-full bg-emerald-500/10 blur-[130px] transition-all duration-1000 ease-out"></div>
+        
+        <!-- Animated Background Bubbles Container -->
+        <div id="particlesContainer" class="absolute inset-0"></div>
+    </div>
+
+    <!-- STICKY HEADER -->
+    <nav class="fixed top-0 left-0 w-full z-50 bg-stone-950/80 backdrop-blur-md border-b border-stone-900/60">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <span class="text-xl font-black tracking-tighter flex items-center gap-1 cursor-pointer select-none">
+                KAKE <span class="text-amber-500 font-extrabold">FIZZ</span>
+            </span>
+            <div class="flex items-center space-x-6 text-xs font-bold uppercase tracking-widest text-stone-400">
+                <a href="#about" class="hover:text-emerald-400 transition hidden sm:inline-block">The Story</a>
+                <a href="#arena" class="hover:text-emerald-400 transition">The Battle</a>
+                <a href="#contact" class="px-4 py-2 rounded-full bg-emerald-500 hover:bg-emerald-400 text-stone-950 transition font-black">Get It Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CLASH ARENA HERO SECTION -->
+    <section id="arena" class="relative min-h-screen flex flex-col justify-center pt-24 pb-16 px-6 z-10 overflow-hidden">
+        <!-- Shockwave element for collision feedback -->
+        <div id="shockwaveRing" class="shockwave"></div>
+
+        <div class="max-w-6xl mx-auto w-full flex flex-col items-center">
+            
+            <!-- Catchy Slogan Header -->
+            <div class="text-center space-y-4 mb-10 max-w-2xl px-4">
+                <div class="inline-flex items-center gap-2 text-[10px] font-black tracking-widest uppercase bg-stone-900 border border-stone-800 px-4 py-2 rounded-full">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>Rs. 10 ONLY • POCKET-SIZE 160ML BOTTLES</span>
+                </div>
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-white">
+                    The Ultimate <span class="text-amber-500">Spice</span> vs <span class="text-emerald-400">Mint</span> Duel
+                </h1>
+                <p class="text-stone-400 text-xs sm:text-sm">
+                    Two complete legends of hydration. Choose your character or tap the center button to slam them into an explosive fusion mocktail!
+                </p>
+            </div>
+
+            <!-- Dual Bottle Arena (Mobile Stackable Grid) -->
+            <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-center relative min-h-[460px] py-4">
+                
+                <!-- Center VS Divider / Crash Button -->
+                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-2">
+                    <button onclick="triggerBottleClash()" class="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500 to-emerald-500 text-stone-950 font-black flex items-center justify-center text-sm shadow-2xl hover:scale-110 active:scale-90 transition transform hover:rotate-12 border-2 border-white/20 select-none">
+                        VS
+                    </button>
+                    <span class="text-[9px] uppercase tracking-widest text-stone-500 font-bold select-none">Tap to Clash</span>
+                </div>
+
+                <!-- LEFT DRINK CARD: Kake Da Zeera -->
+                <div id="zeeraFramer" class="perspective-container flex flex-col items-center justify-center md:items-end md:pr-16 transition-all duration-500">
+                    <div id="zeeraBottleCard" class="relative group cursor-pointer transition-all duration-500 ease-out origin-bottom transform hover:scale-105 active:scale-95" onclick="selectAndSplash('zeera')">
+                        <!-- Glowing Backlight behind bottle -->
+                        <div class="absolute -inset-4 rounded-full bg-amber-500/10 blur-3xl opacity-75 group-hover:bg-amber-500/20 transition duration-500"></div>
+                        
+                        <!-- Verbatim Referenced Product Image -->
+                        <img id="zeeraImg" 
+                             src="./WhatsApp Image 2026-07-12 at 2.17.39 PM.jpeg" 
+                             alt="Kake Da Zeera Bottle" 
+                             class="h-[360px] sm:h-[430px] object-contain drop-shadow-[0_20px_40px_rgba(245,158,11,0.25)] select-none pointer-events-none transition duration-500"
+                             onerror="this.src='https://placehold.co/400x800/f59e0b/ffffff?text=Kake+Da+Zeera'">
+                        
+                        <!-- Creative contextual tag -->
+                        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-amber-500 text-stone-950 font-black text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/20 shadow-lg select-none">
+                            🪵 Spiced Digester
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT DRINK CARD: Kake Di Mojito -->
+                <div id="mojitoFramer" class="perspective-container flex flex-col items-center justify-center md:items-start md:pl-16 transition-all duration-500">
+                    <div id="mojitoBottleCard" class="relative group cursor-pointer transition-all duration-500 ease-out origin-bottom transform hover:scale-105 active:scale-95" onclick="selectAndSplash('mojito')">
+                        <!-- Glowing Backlight behind bottle -->
+                        <div class="absolute -inset-4 rounded-full bg-emerald-500/10 blur-3xl opacity-75 group-hover:bg-emerald-500/20 transition duration-500"></div>
+                        
+                        <!-- Verbatim Referenced Product Image -->
+                        <img id="mojitoImg" 
+                             src="./WhatsApp Image 2026-07-12 at 2.17.39 PM (1).jpeg" 
+                             alt="Kake Di Mojito Bottle" 
+                             class="h-[360px] sm:h-[430px] object-contain drop-shadow-[0_20px_40px_rgba(16,185,129,0.25)] select-none pointer-events-none transition duration-500"
+                             onerror="this.src='https://placehold.co/400x800/10b981/ffffff?text=Kake+Di+Mojito'">
+                        
+                        <!-- Creative contextual tag -->
+                        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-emerald-500 text-stone-950 font-black text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/20 shadow-lg select-none">
+                            🌱 Mint Refresher
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- DUAL POPULARITY & FLAVOR BALANCE SLIDER -->
+            <div class="w-full max-w-xl mt-8 px-6 space-y-4">
+                <input type="range" id="battleSlider" min="0" max="100" value="50" class="w-full h-3 bg-stone-900 border border-stone-800 rounded-lg appearance-none cursor-pointer accent-amber-500 py-1">
+                <div class="flex justify-between text-[11px] font-black uppercase tracking-widest">
+                    <span class="text-amber-500 cursor-pointer" onclick="shiftSliderTo(0)">🪵 Kake Da Zeera Focus</span>
+                    <span id="sliderFeedbackText" class="text-stone-400 font-extrabold">Equal Balance</span>
+                    <span class="text-emerald-400 cursor-pointer" onclick="shiftSliderTo(100)">🌱 Kake Di Mojito Focus</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- THE STORY / ABOUT US SECTION -->
+    <section id="about" class="py-20 px-6 bg-stone-900/30 border-t border-stone-900 relative">
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            
+            <!-- Visual Grid of Authentic Spices -->
+            <div class="grid grid-cols-2 gap-4 order-2 md:order-1">
+                <div class="glass-card p-5 rounded-2xl text-center space-y-2 hover:border-amber-500/20 transition-all">
+                    <span class="text-2xl select-none">🪵</span>
+                    <h4 class="font-bold text-white text-xs">Roasted Cumin</h4>
+                    <p class="text-stone-500 text-[10px] leading-tight">Slow-roasted and crushed cumin seeds inside Zeera.</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl text-center space-y-2 hover:border-emerald-500/20 transition-all">
+                    <span class="text-2xl select-none">🌱</span>
+                    <h4 class="font-bold text-white text-xs">Peppermint Oil</h4>
+                    <p class="text-stone-500 text-[10px] leading-tight">Clean, intense botanically sourced mint flavors.</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl text-center space-y-2 hover:border-amber-500/20 transition-all">
+                    <span class="text-2xl select-none">🧂</span>
+                    <h4 class="font-bold text-white text-xs">Kala Namak</h4>
+                    <p class="text-stone-500 text-[10px] leading-tight">The secret digestive rock-salt that packs the punch.</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl text-center space-y-2 hover:border-emerald-500/20 transition-all">
+                    <span class="text-2xl select-none">🍋</span>
+                    <h4 class="font-bold text-white text-xs">Lime Citric Squeeze</h4>
+                    <p class="text-stone-500 text-[10px] leading-tight">Fresh, mouth-watering sour lime profile.</p>
+                </div>
+            </div>
+
+            <!-- Narrative / Storytelling text -->
+            <div class="space-y-4 order-1 md:order-2">
+                <span class="text-[9px] font-black tracking-widest text-emerald-400 uppercase bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">
+                    The Story of Kake Fizz
+                </span>
+                <h2 class="text-3xl font-black text-white leading-tight">
+                    Pure Street-side Legacy, <span class="text-emerald-400">Bottled for ₹10</span>
+                </h2>
+                <p class="text-stone-400 text-xs sm:text-sm leading-relaxed">
+                    Why choose between earthy warmth and ice-cold sweet botanicals? We set out to give you both as travel-ready 160ml companions. 
+                </p>
+                <p class="text-stone-400 text-xs sm:text-sm leading-relaxed">
+                    By extracting pure, premium roasted cumin dust and balancing it with muddled garden-fresh mint elements, we created two masterfully distinct profiles. Each is crafted to fit snugly into your bag, ready to burst with energy and reset your hydration.
+                </p>
+                <p class="text-amber-500 font-bold text-xs">
+                    ★ Premium digestive botanicals with zero compromise on raw Indian taste buds.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONTACT / BUSINESS ENQUIRIES -->
+    <section id="contact" class="py-16 px-6 bg-stone-950 border-t border-stone-900">
+        <div class="max-w-md mx-auto space-y-6">
+            <div class="text-center">
+                <h2 class="text-3xl font-black text-white">Stock Our Products</h2>
+                <p class="text-stone-400 text-xs mt-1">Want Kake Fizz bottles at your retail shop, wedding, or store? Connect with us.</p>
+            </div>
+
+            <!-- Inline form success message -->
+            <div id="formSuccess" class="hidden p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-center text-xs">
+                ✨ Success! Kake's distribution network will call you back within 24 hours.
+            </div>
+
+            <form id="enquiryForm" class="space-y-4" onsubmit="handleFormSubmit(event)">
+                <div>
+                    <label class="block text-[11px] font-bold tracking-wider uppercase text-stone-400 mb-1">Your Full Name</label>
+                    <input type="text" id="formName" required placeholder="John Doe" class="w-full bg-stone-900 border border-stone-800 focus:border-emerald-500 rounded-lg px-3 py-2.5 text-sm text-white outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold tracking-wider uppercase text-stone-400 mb-1">Email Address</label>
+                    <input type="email" id="formEmail" required placeholder="john@example.com" class="w-full bg-stone-900 border border-stone-800 focus:border-emerald-500 rounded-lg px-3 py-2.5 text-sm text-white outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold tracking-wider uppercase text-stone-400 mb-1">City / Distribution Location</label>
+                    <input type="text" id="formLocation" required placeholder="e.g. Rohtak, Haryana" class="w-full bg-stone-900 border border-stone-800 focus:border-emerald-500 rounded-lg px-3 py-2.5 text-sm text-white outline-none transition">
+                </div>
+                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-stone-950 text-xs font-black tracking-widest uppercase rounded-lg transition active:scale-95 shadow-lg shadow-emerald-500/25">
+                    Submit Wholesaler Enquiry
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- BRAND FOOTER -->
+    <footer class="bg-stone-950 border-t border-stone-900 py-12 px-6">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-stone-400 text-sm">
+            <div class="text-center md:text-left space-y-1">
+                <span class="text-xl font-black tracking-tighter text-emerald-400">KAKE <span class="text-amber-500">FIZZ</span></span>
+                <p class="text-xs text-stone-500">Premium Bottle Distributors • ₹10 Only</p>
+            </div>
+            
+            <!-- Interactive Contact Info Columns -->
+            <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 text-center sm:text-left">
+                <!-- Phone -->
+                <div class="flex items-center justify-center sm:justify-start gap-2">
+                    <span class="text-amber-500 text-base">📞</span>
+                    <a href="tel:+919876543210" class="hover:text-amber-500 hover:underline transition text-xs font-medium">+91 82781 84444</a>
+                </div>
+                <!-- Email -->
+                <div class="flex items-center justify-center sm:justify-start gap-2">
+                    <span class="text-emerald-400 text-base">✉️</span>
+                    <a href="mailto:orders@kakefizz.com" class="hover:text-emerald-400 hover:underline transition text-xs font-medium">orders@kakefizz.com</a>
+                </div>
+                <!-- Instagram -->
+                <div class="flex items-center justify-center sm:justify-start gap-2">
+                    <span class="text-pink-400 text-base">📸</span>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 hover:underline transition text-xs font-medium">@kake.fizz</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="max-w-4xl mx-auto border-t border-stone-900 mt-8 pt-6 text-center text-stone-600 text-xs">
+            <p>&copy; 2026 KAKE FIZZ.</p>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE SCRIPTS -->
+    <script>
+        // Track visual variables and animation statuses
+        let isClashing = false;
+
+        // Populate programmatically generated floating background particles
+        function initBubbles() {
+            const container = document.getElementById('particlesContainer');
+            container.innerHTML = '';
+            
+            // Adjust count based on mobile display capabilities
+            const bubbleCount = window.innerWidth < 640 ? 6 : 14;
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble-particle text-lg select-none';
+                
+                // Randomize bubble type: mint leaf or cumin seed emoji representation
+                const randomVal = Math.random();
+                bubble.innerText = randomVal < 0.5 ? '🌱' : '🪵';
+                
+                const left = Math.random() * 100;
+                const duration = Math.random() * 8 + 6;
+                const delay = Math.random() * 4;
+
+                bubble.style.left = `${left}%`;
+                bubble.style.setProperty('--duration', `${duration}s`);
+                bubble.style.setProperty('--delay', `${delay}s`);
+
+                container.appendChild(bubble);
+            }
+        }
+
+        // Tap splash logic that triggers whenever a product is directly clicked
+        function selectAndSplash(type) {
+            if (isClashing) return;
+
+            const targetFramer = type === 'zeera' ? document.getElementById('zeeraBottleCard') : document.getElementById('mojitoBottleCard');
+            
+            // Perform 3D micro bounce transform
+            targetFramer.style.transform = 'scale(0.9) rotate(-3deg)';
+            setTimeout(() => {
+                targetFramer.style.transform = 'scale(1.1) rotate(3deg)';
+            }, 100);
+            setTimeout(() => {
+                targetFramer.style.transform = 'scale(1)';
+            }, 350);
+
+            // Dynamically instantiate splash elements
+            const splashEmoji = type === 'mojito' ? '🌱' : '🪵';
+            const count = 6;
+            const containerRect = targetFramer.getBoundingClientRect();
+            
+            for (let i = 0; i < count; i++) {
+                const splash = document.createElement('div');
+                splash.innerText = splashEmoji;
+                splash.style.position = 'absolute';
+                splash.style.pointerEvents = 'none';
+                splash.style.zIndex = '40';
+                splash.style.fontSize = '24px';
+                
+                // Position at center of selected bottle
+                splash.style.left = `50%`;
+                splash.style.top = `40%`;
+                
+                const angle = (Math.PI * 2 / count) * i;
+                const distance = Math.random() * 70 + 50;
+                const targetX = Math.cos(angle) * distance;
+                const targetY = Math.sin(angle) * distance - 30; // slight upward drag bias
+
+                splash.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                targetFramer.appendChild(splash);
+
+                // Delay state trigger to execute transition instantly
+                setTimeout(() => {
+                    splash.style.transform = `translate(${targetX}px, ${targetY}px) scale(0)`;
+                    splash.style.opacity = '0';
+                }, 20);
+
+                setTimeout(() => {
+                    splash.remove();
+                }, 650);
+            }
+        }
+
+        // Ultimate bottle clash event (SLAM physics animation)
+        function triggerBottleClash() {
+            if (isClashing) return;
+            isClashing = true;
+
+            const zeeraFramer = document.getElementById('zeeraFramer');
+            const mojitoFramer = document.getElementById('mojitoFramer');
+            const body = document.getElementById('mainBody');
+            const shockwave = document.getElementById('shockwaveRing');
+
+            // Save original styles/translations
+            const origZeeraStyle = zeeraFramer.style.transform;
+            const origMojitoStyle = mojitoFramer.style.transform;
+
+            // Determine layout-specific collision vectors (mobile stack vs desktop row)
+            const isMobile = window.innerWidth < 768;
+            
+            if (isMobile) {
+                // Slam downwards / upwards to center VS
+                zeeraFramer.style.transform = 'translateY(120px) scale(0.95)';
+                mojitoFramer.style.transform = 'translateY(-120px) scale(0.95)';
+            } else {
+                // Slam inwards to center VS
+                zeeraFramer.style.transform = 'translateX(180px) scale(0.95)';
+                mojitoFramer.style.transform = 'translateX(-180px) scale(0.95)';
+            }
+
+            // Trigger actual impact frame after spring slam delay
+            setTimeout(() => {
+                // Flash body color background
+                body.style.backgroundColor = '#1c1917';
+                body.classList.add('shake-active');
+
+                // Trigger Shockwave ring positioning & scale
+                const vsButton = document.querySelector('button[onclick="triggerBottleClash()"]');
+                const btnRect = vsButton.getBoundingClientRect();
+                
+                shockwave.style.left = `${btnRect.left + btnRect.width / 2 + window.scrollX - 75}px`;
+                shockwave.style.top = `${btnRect.top + btnRect.height / 2 + window.scrollY - 75}px`;
+                shockwave.style.width = '150px';
+                shockwave.style.height = '150px';
+                shockwave.style.display = 'block';
+                shockwave.style.animation = 'shockwave-ring 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+
+                // Launch extreme mixed particles
+                const particleCount = 12;
+                for (let i = 0; i < particleCount; i++) {
+                    const splat = document.createElement('div');
+                    splat.innerText = i % 2 === 0 ? '🌱' : '🪵';
+                    splat.style.position = 'absolute';
+                    splat.style.pointerEvents = 'none';
+                    splat.style.zIndex = '60';
+                    splat.style.fontSize = '32px';
+                    splat.style.left = `${btnRect.left + btnRect.width/2 + window.scrollX - 16}px`;
+                    splat.style.top = `${btnRect.top + btnRect.height/2 + window.scrollY - 16}px`;
+
+                    const angle = (Math.PI * 2 / particleCount) * i;
+                    const distance = Math.random() * 140 + 80;
+                    const targetX = Math.cos(angle) * distance;
+                    const targetY = Math.sin(angle) * distance;
+
+                    splat.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+                    document.body.appendChild(splat);
+
+                    setTimeout(() => {
+                        splat.style.transform = `translate(${targetX}px, ${targetY}px) rotate(${Math.random() * 360}deg) scale(0)`;
+                        splat.style.opacity = '0';
+                    }, 20);
+
+                    setTimeout(() => splat.remove(), 850);
+                }
+
+                // Restore original bottle layout frames
+                setTimeout(() => {
+                    zeeraFramer.style.transform = origZeeraStyle;
+                    mojitoFramer.style.transform = origMojitoStyle;
+                }, 150);
+
+            }, 250);
+
+            // Reset clash lock
+            setTimeout(() => {
+                body.style.backgroundColor = '';
+                body.classList.remove('shake-active');
+                shockwave.style.display = 'none';
+                shockwave.style.animation = '';
+                isClashing = false;
+            }, 600);
+        }
+
+        // Slider-driven focal updates to bottles and labels
+        const slider = document.getElementById('battleSlider');
+        const feedbackText = document.getElementById('sliderFeedbackText');
+        const zeeraImg = document.getElementById('zeeraImg');
+        const mojitoImg = document.getElementById('mojitoImg');
+
+        function updateFocalStates(val) {
+            // Left bottle focus calculations
+            const leftScale = 1 + (100 - val) / 500; // max scale 1.2 at 0
+            const leftOpacity = 0.3 + (100 - val) / 142; // max opacity 1 at 0, min 0.3 at 100
+            
+            // Right bottle focus calculations
+            const rightScale = 1 + val / 500; // max scale 1.2 at 100
+            const rightOpacity = 0.3 + val / 142; // max opacity 1 at 100, min 0.3 at 0
+
+            // Apply direct styling matrix shifts
+            zeeraImg.style.transform = `scale(${leftScale})`;
+            zeeraImg.style.opacity = leftOpacity;
+
+            mojitoImg.style.transform = `scale(${rightScale})`;
+            mojitoImg.style.opacity = rightOpacity;
+
+            // Feedback label logic
+            if (val < 40) {
+                feedbackText.innerText = "Roasted Cumin Dominant";
+                feedbackText.className = "text-amber-500 font-extrabold transition-colors";
+            } else if (val > 60) {
+                feedbackText.innerText = "Citrus Peppermint Dominant";
+                feedbackText.className = "text-emerald-400 font-extrabold transition-colors";
+            } else {
+                feedbackText.innerText = "Equal Balance";
+                feedbackText.className = "text-stone-400 font-extrabold transition-colors";
+            }
+        }
+
+        slider.addEventListener('input', (e) => {
+            updateFocalStates(parseInt(e.target.value));
+        });
+
+        function shiftSliderTo(val) {
+            slider.value = val;
+            updateFocalStates(val);
+        }
+
+        // Safe static submit to handle contact log
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('enquiryForm');
+            const successAlert = document.getElementById('formSuccess');
+
+            // Animate dynamic message transition
+            form.classList.add('hidden');
+            successAlert.classList.remove('hidden');
+        }
+
+        // Initialize window configurations
+        window.onload = function() {
+            initBubbles();
+            updateFocalStates(50);
+        }
+
+        window.onresize = function() {
+            initBubbles();
+        }
+    </script>
+</body>
+</html>
